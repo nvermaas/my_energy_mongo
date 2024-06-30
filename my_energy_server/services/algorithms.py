@@ -8,8 +8,7 @@ from calendar import monthrange
 from django.db.models import Sum, Min, Max, Avg
 from my_energy_server.models import Configuration, EnergyRecord
 from .common import timeit
-from .growatt import hash_password, GrowattApi, Timespan
-
+from pymongo import MongoClient
 from django.conf import settings
 
 
@@ -112,7 +111,14 @@ def get_previous_record(timestamp_from, timestamp):
 
     # select the range and retrieve the last record (the latest timestamp)
     try:
-        queryset = EnergyRecord.objects.filter(timestamp__range=[timestamp_from, timestamp])
+        raw_query = {
+            'timestamp': {
+                '$gte': timestamp_from,
+                '$lte': timestamp
+            }
+        }
+        queryset = EnergyRecord.objects(__raw__=raw_query)
+        #queryset = EnergyRecord.objects.filter(timestamp__range=[timestamp_from, timestamp])
         last_record = queryset.latest('timestamp')
     except:
         # if there is no last_record, then return an empty record
@@ -131,10 +137,12 @@ def get_average_from_dataset(timestamp_from, timestamp_to, dataset):
     return avg_value
 
 
-@timeit
+
 def get_sum_from_dataset(timestamp_from, timestamp_to, dataset):
     query = dataset + '__sum'
-    sum_value = EnergyRecord.objects.filter(timestamp__range=[timestamp_from, timestamp_to]).aggregate(Sum(dataset))[query]
+    #sum_value = EnergyRecord.objects.filter(timestamp__range=[timestamp_from, timestamp_to]).aggregate(Sum(dataset))[query]
+    #todo: use raw query
+    sum_value = None
     if sum_value == None:
         sum_value = 0.0
     return sum_value
@@ -195,13 +203,21 @@ def get_data(param_to,param_from,resolution):
     # determine the dimensions of the requested data
     records_expected = get_expected_number_of_records(param_from, param_to, resolution_in_minutes)
 
-    rec0 = EnergyRecord(kwh_181=0, kwh_182=0, kwh_281=0, kwh_282=0, gas=0, growatt_power=0, growatt_power_today=0)
-
     timestamp = timestamp_param_from
 
     try:
-        rec1 = EnergyRecord.objects.get(timestamp=timestamp)
-    except:
+        #record = EnergyRecord.objects(gas=276682).first()
+        #print(record)
+        #print(record.timestamp)
+
+        #rec1 = EnergyRecord.objects.get(timestamp=timestamp)
+        #print(rec1)
+        
+        rec1 = EnergyRecord.objects(__raw__={'timestamp': timestamp}).first()
+        print(rec1.timestamp)
+
+    except Exception as error:
+        print(error)
         # record not found, fake it by getting the previous one.
         rec1 = get_previous_record(timestamp_param_from, timestamp)
 
@@ -214,7 +230,9 @@ def get_data(param_to,param_from,resolution):
             next_timestamp = timestamp + datetime.timedelta(minutes=resolution_in_minutes)
 
         try:
-            rec2 = EnergyRecord.objects.get(timestamp=next_timestamp)
+            #rec2 = EnergyRecord.objects.get(timestamp=next_timestamp)
+            rec2 = EnergyRecord.objects(__raw__={'timestamp': next_timestamp}).first()
+
         except:
             # record not found, find the last record with data and use that
             if (last_record==None):

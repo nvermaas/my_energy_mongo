@@ -90,12 +90,41 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'my_energy.sqlite3'),
-    }
+import mongoengine
+from mongoengine import connect, connection
+
+MONGODB_SETTINGS = {
+    'db': 'my_energy',
+    'host': 'mongodb://middle-earth:27017/',
 }
+
+mongoengine.connect(**MONGODB_SETTINGS)
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'my_energy.sqlite3'),
+#    }
+#}
+
+# Connect to MongoDB when the application starts
+connect(**MONGODB_SETTINGS)
+
+# Test connection
+def test_mongo_connection():
+    try:
+        # Try to get the connection alias to see if it's established
+        conn = connection.get_connection()
+        conn.server_info()  # Attempt to get server info to verify connection
+        print("MongoDB connection established successfully.")
+
+        databases = conn.list_database_names()
+        print(f"Databases on the server: {databases}")
+
+    except Exception as e:
+        print(f"Failed to connect to MongoDB: {e}")
+
+test_mongo_connection()
+
 
 
 # Password validation
@@ -205,3 +234,4 @@ LOGGING = {
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

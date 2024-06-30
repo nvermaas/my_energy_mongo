@@ -4,3 +4,5 @@ djangorestframework==3.14
 django-cors-headers==3.6.0
 requests==2.21.0
 gunicorn==19.9.0
+pymongo==4.8.0
+mongoengine==0.28.2
