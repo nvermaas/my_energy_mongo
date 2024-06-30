@@ -1,0 +1,65 @@
+TD {
+  font-family: Raleway;
+  font-size: 12pt;
+}
+
+.defined, .completed, .complete {
+  background-color: lemonchiffon;
+  color: blue;
+}
+.scheduled {
+  background-color: lightyellow;
+  color: green;
+}
+.running, .observing {
+ color: green;
+ font-weight: bold;
+}
+.created {
+  background-color: lemonchiffon;
+  color: blue;
+}
+.valid_priority {
+  color: green;
+}
+.valid, .combining{
+  color: green;
+}
+.copied {
+  color: black;
+}
+.archived {
+  color: black;
+}
+.secured {
+  color: black;
+}
+.removed {
+  color: darkgray;
+}
+.invalid,.error,.aborted,.incomplete,.failed,.Failed {
+  color: red;
+}
+.ingesting {
+ color: green;
+ font-weight: bold;
+}
+.checking,.starting,.removing {
+font-style: italic;
+}
+
+p.title {
+	font-family: Raleway;
+	font-size: 18pt;
+}
+
+.footer {
+  font-family: Arial;
+  font-size: 10pt;
+  font-style: italic;
+}
+
+.ml-auto .dropdown-menu {
+  left: auto !important;
+  right: 0px;
+}

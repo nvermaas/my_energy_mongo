@@ -1,0 +1,6 @@
+Django==5
+django-filter==2.3.0
+djangorestframework==3.14
+django-cors-headers==3.6.0
+requests==2.21.0
+gunicorn==19.9.0

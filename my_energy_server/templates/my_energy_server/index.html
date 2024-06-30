@@ -1,0 +1,92 @@
+{% extends 'my_energy_server/base.html' %}
+{% load static %}
+{% block myBlock %}
+
+<div class="container-fluid details-container">
+    <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+
+        <div class="panel panel-success">
+
+            <div class="panel-body">
+
+                <table class="table table-striped table-bordered table-sm">
+                    <thead>
+                    <tr>
+                        <th>Last update from RaspiQbox</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for configuration in my_configuration %}
+                    <div class="row">
+                        <tr>
+                            <td>{{ configuration.timestamp_last_update }}</td>
+                        </tr>
+                     </div>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                &nbsp;
+                <h4>Examples</h4>
+                <table class="table table-striped table-bordered table-sm">
+                    <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>URL</th>
+                        <th>Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for configuration in my_configuration %}
+                    <div class="row">
+                        <tr>
+                            <td>
+                                list
+                            </td>
+                            <td>
+                                <a href="{% url 'list-view' %}">{% url 'list-view' %}</a>
+                            </td>
+                            <td>
+                                The structure of the my_energy database.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                getseries
+                            </td>
+                            <td>
+                                 <a href="/my_energy/api/getseries?from=2019-03-18&to=2019-03-19&resolution=Hour">/my_energy/api/getseries?from=2019-03-18&to=2019-03-19&resolution=Hour</a>
+                            </td>
+                            <td>
+                                get data per timerange
+                            </td>
+                        </tr>
+
+                    </div>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+
+        </div>
+       </div>
+
+    </div>
+
+</div>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        setInterval(function() {
+            window.location.reload(true);
+        }, 60000)
+    });
+    </script>
+
+<p class="footer" small>Version 30 Jun 2024 - (C) 2020 - Nico Vermaas</p>
+
+{% endblock %}
+
